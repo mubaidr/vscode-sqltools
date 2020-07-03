@@ -5,10 +5,10 @@ import { InvalidActionError } from '@sqltools/util/exception';
 import log from '@sqltools/util/log';
 import telemetry from '@sqltools/util/telemetry';
 import { ILanguageServer, ILanguageServerPlugin, Arg0, RequestHandler, LSContextMap } from '@sqltools/types';
-import { DISPLAY_NAME, EXT_CONFIG_NAMESPACE, ServerErrorNotification } from '@sqltools/util/constants';
-import { RegisterPlugin } from './contracts';
-import LSContext from './context';
-import { ExitCalledNotification } from '../extension/api/contracts';
+import { DISPLAY_NAME, EXT_NAMESPACE, ServerErrorNotification, VERSION } from '@sqltools/util/constants';
+import { RegisterPlugin } from '@sqltools/language-server/contracts';
+import LSContext from '@sqltools/language-server/context';
+import { ExitCalledNotification } from '@sqltools/language-server/notifications';
 import { resolve as pathResolve } from 'path';
 import logger from '@sqltools/util/log';
 import { spawnSync } from 'child_process';
@@ -58,14 +58,15 @@ class SQLToolsLanguageServer implements ILanguageServer {
   }
 
   private onRegisterPlugin: RequestHandler<typeof RegisterPlugin> = async ({ path: pluginPath } = { path: '' }) => {
-    log.extend('info')('request to register plugin: "%s"', pluginPath);
     try {
-      let plugin = (__non_webpack_require__ || require)(pathResolve(pluginPath));
+      const maskedPath = pluginPath.replace(/.+\/extensions\//g, '');
+      log.extend('info')('Will register: "%s"', maskedPath);
+      let plugin = require(pathResolve(pluginPath));
       plugin = plugin.default || plugin;
       await this.registerPlugin(plugin);
-      log.extend('debug')('plugin %s loaded', pluginPath);
+      log.extend('debug')('%s loaded', maskedPath);
     } catch (error) {
-      log.extend('error')('Error registering plugin: %O', error);
+      log.extend('error')('Failed registering plugin: %O', error);
       return Promise.reject(error);
     }
   }
@@ -112,7 +113,7 @@ class SQLToolsLanguageServer implements ILanguageServer {
   };
 
   private onDidChangeConfiguration: Arg0<IConnection['onDidChangeConfiguration']> = changes => {
-    ConfigRO.replaceAll(changes.settings[EXT_CONFIG_NAMESPACE]);
+    ConfigRO.replaceAll(changes.settings[EXT_NAMESPACE]);
     if (changes.settings.telemetry && changes.settings.telemetry.enableTelemetry) telemetry.enable();
     else telemetry.disable();
     if (changes.settings['sqltools.debug'] && changes.settings['sqltools.debug'].namespaces) {
@@ -145,11 +146,10 @@ class SQLToolsLanguageServer implements ILanguageServer {
         version = output.join('');
       }
     } catch (error) { }
-    log.extend('info')(`${DISPLAY_NAME} Server started!
-===============================
-Using node runtime?: ${isNode ? 'yes' : 'no'}
-ExecPath: ${process.execPath} ${version.replace(/[\r\n]/g, '').trim()}
-===============================`)
+    log.extend('info')(`${DISPLAY_NAME}@${VERSION} server started!\n
+          Using node runtime?: ${isNode ? 'yes' : 'no'}
+          ExecPath: ${process.execPath} ${version.replace(/[\r\n]/g, '').trim()}
+-------------`)
     this._server.listen();
     return this;
   }

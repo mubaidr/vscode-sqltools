@@ -4,6 +4,7 @@ import Button from '../../../components/Button';
 import DriverIcon  from '../../../components/DriverIcon';
 import { SettingsScreenState } from '../interfaces';
 import { UIAction } from '../../../../actions';
+import { EXT_NAMESPACE } from '@sqltools/util/constants';
 
 const ConnectionCreated = ({
   formData,
@@ -36,7 +37,7 @@ const ConnectionCreated = ({
             onClick={reset}
             bg="var(--vscode-list-highlightForeground)"
             href={encodeURI(
-              `command:${process.env.EXT_NAMESPACE || 'sqltools'}.selectConnection?${JSON.stringify(formData.id)}`
+              `command:${EXT_NAMESPACE}.selectConnection?${JSON.stringify(formData.id)}`
             )}
           >
             Connect now
@@ -46,7 +47,7 @@ const ConnectionCreated = ({
             bg="var(--vscode-editorError-foreground)"
             float="right"
             href={encodeURI(
-              `command:${process.env.EXT_NAMESPACE || 'sqltools'}.deleteConnection?${JSON.stringify(formData.id)}`
+              `command:${EXT_NAMESPACE}.deleteConnection?${JSON.stringify(formData.id)}`
             )}
           >
             Delete {formData.name}

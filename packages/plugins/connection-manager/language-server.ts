@@ -5,15 +5,15 @@ import { getConnectionId, migrateConnectionSetting } from '@sqltools/util/connec
 import csvStringify from 'csv-stringify/lib/sync';
 import { writeFile as writeFileWithCb } from 'fs';
 import { promisify } from 'util';
-import { ConnectRequest, DisconnectRequest, SearchConnectionItemsRequest, GetConnectionPasswordRequest, GetConnectionsRequest, RunCommandRequest, SaveResultsRequest, ProgressNotificationStart, ProgressNotificationComplete, TestConnectionRequest, GetChildrenForTreeItemRequest, ForceListRefresh } from './contracts';
-import Handlers from './cache/handlers';
+import { ConnectRequest, DisconnectRequest, SearchConnectionItemsRequest, GetConnectionPasswordRequest, GetConnectionsRequest, RunCommandRequest, SaveResultsRequest, ProgressNotificationStart, ProgressNotificationComplete, TestConnectionRequest, GetChildrenForTreeItemRequest, ForceListRefresh } from '@sqltools/plugins/connection-manager/contracts';
+import Handlers from '@sqltools/plugins/connection-manager/cache/handlers';
 import DependencyManager from './dependency-manager/language-server';
-import { DependeciesAreBeingInstalledNotification } from './dependency-manager/contracts';
+import { DependeciesAreBeingInstalledNotification } from '@sqltools/plugins/connection-manager/dependency-manager/contracts';
 import decorateLSException from '@sqltools/util/decorators/ls-decorate-exception';
 import logger from '@sqltools/util/log';
 import telemetry from '@sqltools/util/telemetry';
-import connectionStateCache, { ACTIVE_CONNECTIONS_KEY, LAST_USED_ID_KEY } from './cache/connections-state.model';
-import queryResultsCache from './cache/query-results.model';
+import connectionStateCache, { ACTIVE_CONNECTIONS_KEY, LAST_USED_ID_KEY } from '@sqltools/plugins/connection-manager/cache/connections-state.model';
+import queryResultsCache from '@sqltools/plugins/connection-manager/cache/query-results.model';
 
 const writeFile = promisify(writeFileWithCb);
 

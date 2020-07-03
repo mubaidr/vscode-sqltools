@@ -7,13 +7,13 @@ export declare namespace NodeJS {
     PRODUCT: 'ext' | 'ls' | 'ui';
     NODE_ENV: 'development' | 'production';
     IS_NODE_RUNTIME: string;
+    IS_LANGUAGE_SERVER: string;
     EXT_NAMESPACE: string;
     AUTHOR: string;
     DEBUG: string;
     DEBUG_HIDE_DATE: string;
     DISPLAY_NAME: string;
     DSN_KEY: string;
-    EXT_CONFIG_NAMESPACE: string;
     HOME: string;
     USERPROFILE: string;
     VERSION: string;

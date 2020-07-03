@@ -4,13 +4,18 @@
     "esModuleInterop": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "experimentalDecorators": true,
     "lib": ["es6"],
     "module": "commonjs",
     "removeComments": true,
     "resolveJsonModule": true,
-    "sourceMap": true,
-    "target": "es2017",
+    "declaration": false,
+    "target": "esnext",
+		"outDir": "out"
   },
-  "exclude": ["./test", "./node_modules", "./__mocks__", "./*.js"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

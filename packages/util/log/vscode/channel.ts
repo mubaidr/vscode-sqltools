@@ -1,4 +1,4 @@
-if (process.env.PRODUCT !== 'ext') { throw 'Cant use outputchannels outside of VSCode context'; }
+if (String(process.env.IS_LANGUAGE_SERVER) === '1') { throw 'Cant use outputchannels outside of VSCode context'; }
 
 import { DISPLAY_NAME } from '@sqltools/util/constants';
 import { Console } from 'console';

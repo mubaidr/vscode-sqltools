@@ -1,4 +1,6 @@
-@import './screens/app';
+@import './variables';
+@import './lib/core-theme';
+@import './lib/syntax';
 
 h3 > small > a {
   margin: 0 10px;

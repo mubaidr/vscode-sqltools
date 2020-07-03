@@ -8,7 +8,7 @@ ConfigRO.addOnUpdateHook(() => {
     newNS = process.env.NODE_ENV === 'development' ? '*,-babel*' : '*,-babel*,-*:debug,-*:*:debug,-*:*:*:debug,-*:*:*:*:debug,-*:*:*:*:*:debug';
   }
   if (currentNS !== newNS) productLogger._debug.enable(newNS);
-  console.log('namespaces set to ', newNS);
+  console.log(`namespaces set to ${newNS}`);
 });
 
 export default productLogger;

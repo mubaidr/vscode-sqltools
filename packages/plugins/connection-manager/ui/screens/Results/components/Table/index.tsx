@@ -42,6 +42,7 @@ import { UIAction } from '../../../../../actions';
 import { filterPredicate } from '../../utils/filterPredicate';
 import Message from '../../../../components/Message';
 import SortLabel from './SortLabel';
+import { EXT_NAMESPACE } from '@sqltools/util/constants';
 
 export default class Table extends React.PureComponent<TableProps, TableState> {
   state = initialState;
@@ -112,7 +113,7 @@ export default class Table extends React.PureComponent<TableProps, TableState> {
       case MenuActions.OpenEditorWithValueOption:
       case MenuActions.OpenEditorWithRowOption:
         sendMessage(UIAction.CALL, {
-          command: `${process.env.EXT_NAMESPACE}.insertText`,
+          command: `${EXT_NAMESPACE}.insertText`,
           args: [choice === MenuActions.OpenEditorWithValueOption ? `${cellValue}` : JSON.stringify(selectedRows, null, 2)],
         });
       case MenuActions.ReRunQueryOption:

@@ -1,3 +1,4 @@
+process.env.DEBUG_HIDE_DATE = '1';
 import productLogger from '../base';
 import outputChannelLogger from './channel';
 import Config from '@sqltools/util/config-manager';

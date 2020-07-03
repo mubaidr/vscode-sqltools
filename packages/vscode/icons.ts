@@ -1,5 +1,5 @@
 import { Uri } from 'vscode';
-import Context from './context';
+import Context from '@sqltools/vscode/context';
 
 const getIconPath = (icon: string) => Uri.parse(Context.asAbsolutePath(`icons/${icon}.svg`))
 

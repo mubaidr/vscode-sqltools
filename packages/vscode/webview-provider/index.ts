@@ -27,14 +27,11 @@ export default abstract class WebviewProvider<State = any> implements Disposable
   <style>
   :root {${cssVariables}}
   </style>
-  <link rel="stylesheet" type="text/css" href="${this.prepareUrl(Context.asAbsolutePath(`./ui/commons.css`))}">
 </head>
 <body>
-  <link rel="stylesheet" type="text/css" href="${this.prepareUrl(Context.asAbsolutePath(`./ui/theme.css`))}">
   <div id="app-root"></div>
-  <script src="${this.prepareUrl(Context.asAbsolutePath(`./ui/vendor.js`))}" type="text/javascript" charset="UTF-8"></script>
-  <script src="${this.prepareUrl(Context.asAbsolutePath(`./ui/commons.js`))}" type="text/javascript" charset="UTF-8"></script>
-  <script src="${this.prepareUrl(Context.asAbsolutePath(`./ui/${this.id}.js`))}" type="text/javascript" charset="UTF-8"></script>
+  <script src="${this.prepareUrl(Context.asAbsolutePath(`./dist/ui/${this.id}.js`))}" type="text/javascript" charset="UTF-8"></script>
+  <link rel="stylesheet" type="text/css" href="${this.prepareUrl(Context.asAbsolutePath(`./dist/ui/${this.id}.css`))}">
 </body>
 </html>`;
   }
@@ -91,7 +88,7 @@ export default abstract class WebviewProvider<State = any> implements Disposable
       case DefaultUIAction.CALL:
         return commands.executeCommand(payload.command, ...(payload.args || []));
       case DefaultUIAction.NOTIFY_VIEW_READY:
-        process.env.NODE_ENV === 'development' && commands.executeCommand('workbench.action.webview.openDeveloperTools');
+        // process.env.NODE_ENV === 'development' && commands.executeCommand('workbench.action.webview.openDeveloperTools');
         break;
     }
     if (this.messagesHandler) {

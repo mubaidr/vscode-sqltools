@@ -4,7 +4,7 @@ import { getConnectionId } from '@sqltools/util/connection';
 import ConfigRO from '@sqltools/util/config-manager';
 import telemetry from '@sqltools/util/telemetry';
 import generateId from '@sqltools/util/internal-id';
-import LSContext from './context';
+import LSContext from '@sqltools/language-server/context';
 import { IConnection as LSIconnection } from 'vscode-languageserver';
 import DriverNotInstalledError from './exception/driver-not-installed';
 import logger from '@sqltools/util/log';

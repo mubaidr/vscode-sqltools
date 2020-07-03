@@ -1,4 +1,4 @@
-if (process.env.PRODUCT !== 'ext') { throw 'Cant use telemetry module outside of VSCode context. User @sqltools/util/telemetry instead'; }
+if (String(process.env.IS_LANGUAGE_SERVER) === '1') { throw 'Cant use telemetry module outside of VSCode context. User @sqltools/util/telemetry instead'; }
 
 import telemetry from './../generic';
 import Config from '@sqltools/util/config-manager';

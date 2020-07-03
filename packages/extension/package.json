@@ -1,8 +1,8 @@
 {
-    "name": "@sqltools/extension",
+    "name": "sqltools",
     "displayName": "SQLTools",
     "description": "Database management done right. Connection explorer, query runner, intellisense, bookmarks, query history. Feel like a database hero!",
-    "version": "1.0.0",
+    "version": "0.22.10",
     "publisher": "mtxr",
     "license": "MIT",
     "preview": false,
@@ -14,7 +14,10 @@
     "bugs": {
         "url": "https://github.com/mtxr/vscode-sqltools/issues"
     },
-    "main": "./extension.js",
+    "main": "./dist/extension.js",
+    "language-server": "./dist/language-server.js",
+    "scr-settings": "./dist/ui/Settings.js",
+    "scr-results": "./dist/ui/Results.js",
     "author": "Matheus Teixeira <me@mteixeira.dev>",
     "private": true,
     "engines": {
@@ -1149,40 +1152,97 @@
             ]
         }
     },
+    "scripts": {
+        "clean": "rimraf -rf out dist *.vsix",
+        "predev": "yarn run clean",
+        "dev": "concurrently -k \"npm:watch:*\"",
+        "prebuild": "yarn run clean && yarn run ts --noEmit",
+        "build": "cross-env NODE_ENV=production concurrently \"npm:build:*\"",
+        "prepackage": "yarn run build",
+        "package": "vsce package --yarn -o .",
+        "build:ext": "parcel build ./src/index.ts --target main --dist-dir dist --no-cache",
+        "build:ls": "parcel build ./../language-server/index.ts --target language-server --dist-dir dist --no-cache",
+        "watch:tsc": "yarn run ts -w --noEmit --preserveWatchOutput",
+        "watch:tscls": "tsc -p ../language-server -w --noEmit --preserveWatchOutput",
+        "watch:ext": "parcel watch ./src/index.ts --target main --dist-dir dist --no-hmr",
+        "watch:ls": "parcel watch ./../language-server/index.ts --target language-server --dist-dir dist --no-hmr",
+        "watch:screen:settings": "parcel watch ./../plugins/connection-manager/ui/screens/Settings/index.tsx --target scr-settings --dist-dir dist/ui --no-hmr --public-url=/",
+        "watch:screen:results": "parcel watch ./../plugins/connection-manager/ui/screens/Results/index.tsx --target scr-results --dist-dir dist/ui --no-hmr --public-url=/",
+        "ts": "tsc -p ."
+    },
+    "targets": {
+        "main": {
+            "context": "electron-main",
+            "includeNodeModules": {
+                "vscode": false
+            },
+            "engines": {
+                "electron": ">=6.x"
+            },
+            "outputFormat": "commonjs"
+        },
+        "language-server": {
+            "context": "node",
+            "includeNodeModules": {
+                "vscode": false
+            },
+            "outputFormat": "commonjs",
+            "engines": {
+                "node": ">=10.x"
+            }
+        },
+        "scr-settings": {
+            "context": "browser",
+            "includeNodeModules": {
+                "vscode": false
+            },
+            "engines": {
+                "browsers": ["last 1 chrome version"]
+            },
+            "outputFormat": "commonjs"
+        },
+        "scr-results": {
+            "context": "browser",
+            "includeNodeModules": {
+                "vscode": false
+            },
+            "engines": {
+                "browsers": ["last 1 chrome version"]
+            },
+            "outputFormat": "commonjs"
+        }
+    },
+    "optimizers": {
+        "*.js": [
+            "@parcel/optimizer-terser"
+        ]
+    },
     "devDependencies": {
-        "@babel/cli": "^7.5.5",
+        "@parcel/optimizer-terser": "^2.0.0-beta.1",
+        "@parcel/packager-js": "^2.0.0-beta.1",
+        "@parcel/resolver-default": "^2.0.0-beta.1",
+        "@parcel/scope-hoisting": "^2.0.0-beta.1",
+        "@parcel/transformer-css": "^2.0.0-beta.1",
+        "@parcel/transformer-postcss": "^2.0.0-beta.1",
+        "@parcel/transformer-react-refresh-babel": "^2.0.0-beta.1",
+        "@sqltools/plugins": "*",
+        "@sqltools/util": "*",
         "@types/command-exists": "^1.2.0",
         "@types/jest": "^24.0.11",
         "@types/lodash": "^4.14.123",
         "@types/vscode": "^1.42.0",
+        "command-exists": "1.2.9",
+        "concurrently": "^5.2.0",
         "cross-env": "^7.0.2",
         "jest": "^24.5.0",
         "jest-cli": "^24.5.0",
         "lodash": "^4.17.13",
+        "parcel": "2.0.0-beta.1",
+        "rimraf": "^3.0.2",
         "ts-jest": "^24.0.2",
         "typescript": "^3.7.3",
+        "vsce": "1.77.0",
+        "vscode-languageclient": "6.1.3",
         "vscode-test": "^1.2.3"
-    },
-    "dependencies": {
-        "@sqltools/plugins": "*",
-        "@sqltools/util": "*",
-        "command-exists": "1.2.9",
-        "vscode-languageclient": "6.1.3"
-    },
-    "build": [
-        {
-            "entries": {
-                "icons": "icons",
-                "language": "language",
-                "package.json": "file:build/bundle-pkgJson.js"
-            },
-            "type": "copy"
-        },
-        {
-            "entries": {
-                "extension": "index.ts"
-            },
-            "type": "extension"
-        }
-    ]
+    }
 }

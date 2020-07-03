@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import getVscode from '../../lib/vscode';
 import { IWebviewMessage } from '../../interfaces';
 import logger from '@sqltools/util/log';
+import { EXT_NAMESPACE } from '@sqltools/util/constants';
 import { NSDatabase, IQueryOptions } from '@sqltools/types';
 import ViewContainer from './components/ViewContainer';
 import Tabs from './components/QueryTabs';
@@ -75,12 +76,12 @@ const Screen: React.SFC<Props> = () => {
   const resetRequest = () => dispatch({ type: ACTION.RESET });
   const toggleTab = (value: number) => dispatch({ type: ACTION.TOGGLE_TAB, payload: value });
   const resultsReceived = (changes: Partial<QueryResultsState>) => dispatch({ type: ACTION.RESULTS_RECEIVED, payload: changes });
-  const focusMessages = () => sendMessage(UIAction.CALL, { command: `${process.env.EXT_NAMESPACE}ViewConsoleMessages.focus` });
+  const focusMessages = () => sendMessage(UIAction.CALL, { command: `${EXT_NAMESPACE}ViewConsoleMessages.focus` });
   const exportResults = (choice?: MenuActions.SaveCSVOption | MenuActions.SaveJSONOption | any) => {
     const activeResult = getCurrentResult(stateRef.current);
     if (!activeResult) return;
     sendMessage(UIAction.CALL, {
-      command: `${process.env.EXT_NAMESPACE}.saveResults`,
+      command: `${EXT_NAMESPACE}.saveResults`,
       args: [{
         ...getCurrentQueryOptions(activeResult),
         fileType: Object.values(MenuActions).includes(choice) ? (choice === MenuActions.SaveJSONOption ? 'json' : 'csv') : undefined,
@@ -93,13 +94,13 @@ const Screen: React.SFC<Props> = () => {
     const { queryType, query, queryParams, pageSize, page } = activeResult;
     if (queryType) {
       sendMessage(UIAction.CALL, {
-        command: `${process.env.EXT_NAMESPACE}.${queryType}`,
+        command: `${EXT_NAMESPACE}.${queryType}`,
         args: [queryParams, { ...getCurrentQueryOptions(activeResult), page: page, pageSize: pageSize || 50 }],
       });
       return set({ loading: true });
     }
     sendMessage(UIAction.CALL, {
-      command: `${process.env.EXT_NAMESPACE}.executeQuery`,
+      command: `${EXT_NAMESPACE}.executeQuery`,
       args: [
         query,
         getCurrentQueryOptions(activeResult) as IQueryOptions
@@ -112,7 +113,7 @@ const Screen: React.SFC<Props> = () => {
     set({ loading: true });
     const activeResult = state.resultTabs[activeTab];
     sendMessage(UIAction.CALL, {
-      command: `${process.env.EXT_NAMESPACE}.${activeResult.queryType}`,
+      command: `${EXT_NAMESPACE}.${activeResult.queryType}`,
       args: [activeResult.queryParams, { page, pageSize: activeResult.pageSize || 50, requestId: activeResult.requestId }],
     });
   };

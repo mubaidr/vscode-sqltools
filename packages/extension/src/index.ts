@@ -12,7 +12,7 @@ import logger from '@sqltools/util/log';
 import PluginResourcesMap from '@sqltools/util/plugin-resources';
 import SQLToolsLanguageClient from './language-client';
 import Timer from '@sqltools/util/telemetry/timer';
-import Utils from './api/utils';
+import { updateLastRunInfo, getlastRunInfo } from './api/utils';
 
 const log = logger.extend('main');
 // plugins
@@ -34,7 +34,7 @@ export class SQLToolsExtension implements IExtension {
 
   public activate = async (): Promise<IExtension> => {
     const activationTimer = new Timer();
-    const { installedExtPlugins = {} } = Utils.getlastRunInfo();
+    const { installedExtPlugins = {} } = getlastRunInfo();
     Context.globalState.update('extPlugins', installedExtPlugins || {});
     telemetry.updateOpts({
       extraInfo: {
@@ -65,6 +65,7 @@ export class SQLToolsExtension implements IExtension {
     activationTimer.end();
     telemetry.registerTime('activation', activationTimer);
     this.displayReleaseNotesMessage();
+    log.extend('info')(`${DISPLAY_NAME} completed activation!`);
     return {
       client: this.client,
       addAfterCommandSuccessHook: this.addAfterCommandSuccessHook,
@@ -151,7 +152,7 @@ export class SQLToolsExtension implements IExtension {
    */
   private displayReleaseNotesMessage = async () => {
     try {
-      const current = Utils.getlastRunInfo();
+      const current = getlastRunInfo();
       const { lastNotificationDate = 0, updated } = current;
       const lastNDate = parseInt(new Date(lastNotificationDate).toISOString().substr(0, 10).replace(/\D/g, ''), 10);
       const today = parseInt(new Date().toISOString().substr(0, 10).replace(/\D/g, ''), 10);
@@ -163,7 +164,7 @@ export class SQLToolsExtension implements IExtension {
         || updatedRecently
       ) return;
 
-      Utils.updateLastRunInfo({ lastNotificationDate: +new Date() });
+      updateLastRunInfo({ lastNotificationDate: +new Date() });
 
       const moreInfo = 'More Info';
       const supportProject = 'Support This Project';
@@ -210,7 +211,7 @@ export class SQLToolsExtension implements IExtension {
   }
 
   private updateExtPluginsInfo = debounce(async () => {
-    Utils.updateLastRunInfo({ installedExtPlugins: this.extPlugins });
+    updateLastRunInfo({ installedExtPlugins: this.extPlugins });
     await Context.globalState.update('extPlugins', this.extPlugins);
   });
 
@@ -289,11 +290,12 @@ export class SQLToolsExtension implements IExtension {
 let instance: SQLToolsExtension;
 export function activate(ctx: ExtensionContext) {
   try {
-
+    log.extend('info')(`${DISPLAY_NAME}@${VERSION} extension started!`);
     Context.set(ctx);
     if (instance) return;
     migrateFilesToNewPaths();
     instance = new SQLToolsExtension();
+    log.extend('info')(`Start registering plugins`);
     instance.registerPlugin([
       FormatterPlugin,
       new ConnectionManagerPlugin(instance),

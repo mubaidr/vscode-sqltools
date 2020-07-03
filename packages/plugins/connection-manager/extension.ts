@@ -1,6 +1,6 @@
 import logger from '@sqltools/util/log';
 import Config from '@sqltools/util/config-manager';
-import { EXT_NAMESPACE, EXT_CONFIG_NAMESPACE } from '@sqltools/util/constants';
+import { EXT_NAMESPACE } from '@sqltools/util/constants';
 import { IConnection, IExtensionPlugin, ILanguageClient, IExtension, RequestHandler, NSDatabase, ContextValue, IQueryOptions } from '@sqltools/types';
 import { getDataPath, SESSION_FILES_DIRNAME } from '@sqltools/util/path';
 import { getConnectionDescription, getConnectionId, migrateConnectionSettings, getSessionBasename } from '@sqltools/util/connection';
@@ -370,7 +370,7 @@ export default class ConnectionManagerPlugin implements IExtensionPlugin {
       workspaceFolderValue = [],
       workspaceValue = [],
       globalValue = [],
-    } = workspace.getConfiguration(EXT_CONFIG_NAMESPACE).inspect('connections');
+    } = workspace.getConfiguration(EXT_NAMESPACE).inspect('connections');
 
     const findIndex = (arr = []) => arr.findIndex(c => getConnectionId(c) === conn.id);
 
@@ -522,13 +522,13 @@ export default class ConnectionManagerPlugin implements IExtensionPlugin {
     if (!writeTo && (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0)) {
       writeTo = ConfigurationTarget.Global;
     }
-    return workspace.getConfiguration(EXT_CONFIG_NAMESPACE).update('connections', migrateConnectionSettings(connList), writeTo);
+    return workspace.getConfiguration(EXT_NAMESPACE).update('connections', migrateConnectionSettings(connList), writeTo);
   }
 
   private getConnectionList(from?: ConfigurationTarget): IConnection[] {
-    if (!from) return migrateConnectionSettings(workspace.getConfiguration(EXT_CONFIG_NAMESPACE).get('connections') || []);
+    if (!from) return migrateConnectionSettings(workspace.getConfiguration(EXT_NAMESPACE).get('connections') || []);
 
-    const config = workspace.getConfiguration(EXT_CONFIG_NAMESPACE).inspect('connections');
+    const config = workspace.getConfiguration(EXT_NAMESPACE).inspect('connections');
     if (from === ConfigurationTarget.Global) {
       return migrateConnectionSettings(<IConnection[]>(config.globalValue || config.defaultValue) || []);
     }

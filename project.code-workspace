@@ -1,10 +1,10 @@
 {
   "folders": [
-    { "path": "./packages/base-driver" },
-    { "path": "./packages/driver.mssql" },
-    { "path": "./packages/driver.mysql" },
-    { "path": "./packages/driver.pg" },
-    { "path": "./packages/driver.sqlite" },
+    // { "path": "./packages/base-driver" },
+    // { "path": "./packages/driver.mssql" },
+    // { "path": "./packages/driver.mysql" },
+    // { "path": "./packages/driver.pg" },
+    // { "path": "./packages/driver.sqlite" },
     { "path": "./packages/extension" },
     { "path": "./packages/formatter" },
     { "path": "./packages/language-server" },
@@ -12,9 +12,8 @@
     { "path": "./packages/types" },
     { "path": "./packages/util" },
     { "path": "./packages/vscode"},
-    { "path": "./packages/generator-sqltools-driver" },
-    { "path": "./build-tools" },
-    { "path": "./docs" },
+    // { "path": "./packages/generator-sqltools-driver" },
+    // { "path": "./docs" },
   ],
   "extensions": {},
   "settings": {
@@ -44,6 +43,7 @@
       "**/dist": true
     },
     "typescript.tsdk": "root/node_modules/typescript/lib",
+    "npm.useRootDirectory": true
   },
   "tasks": {
     "version": "2.0.0",

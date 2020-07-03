@@ -8,12 +8,17 @@ const Context: Omit<LSContextMap, 'drivers'> = new Map();
 class DriverMap<V = IConnectionDriverConstructor> extends Map<string, V> {
   set (key: string, value: V): this {
     if (typeof key !== 'string') throw 'invalid driver name!';
-    key = key.toLowerCase();
     log.extend('register-driver')(`Driver ${key} registered!`);
-    return super.set(key, value);
+    return super.set(key.toLowerCase(), value);
   }
-  get(key: string) { return super.get(key.toLowerCase()); }
-  has(key: string) { return super.has(key.toLowerCase()); }
+  get(key: string) {
+    log.extend('get')('get %s %O', key, [...this.keys()]);
+    return super.get(key.toLowerCase());
+  }
+  has(key: string) {
+    log.extend('has')('keys %s %O', key, [...this.keys()]);
+    return super.has(key.toLowerCase());
+  }
   delete(key: string) { return super.delete(key.toLowerCase()); }
 }
 const DriversContext: LSContextMap['drivers'] = new DriverMap();

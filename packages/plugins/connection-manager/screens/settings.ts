@@ -1,4 +1,4 @@
-import { EXT_NAMESPACE, DISPLAY_NAME, EXT_CONFIG_NAMESPACE } from '@sqltools/util/constants';
+import { EXT_NAMESPACE, DISPLAY_NAME } from '@sqltools/util/constants';
 import { getConnectionId } from '@sqltools/util/connection';
 import WebviewProvider from '@sqltools/vscode/webview-provider';
 import { commands } from 'vscode';
@@ -128,7 +128,7 @@ export default class SettingsWebview extends WebviewProvider {
   }
 
   private openConnectionFile = async () => {
-    return commands.executeCommand('workbench.action.openSettings', `${EXT_CONFIG_NAMESPACE}.connections`);
+    return commands.executeCommand('workbench.action.openSettings', `${EXT_NAMESPACE}.connections`);
   }
 
   protected messagesHandler = ({ action, payload }) => {

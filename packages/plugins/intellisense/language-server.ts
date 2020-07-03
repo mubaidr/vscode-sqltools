@@ -1,7 +1,7 @@
 import { CompletionItem, CompletionItemKind, Range } from 'vscode-languageserver';
 import { ILanguageServerPlugin, ILanguageServer, ContextValue, Arg0, NSDatabase } from '@sqltools/types';
 import { getDocumentCurrentQuery } from './query';
-import connectionStateCache, { LAST_USED_ID_KEY, ACTIVE_CONNECTIONS_KEY } from '../connection-manager/cache/connections-state.model';
+import connectionStateCache, { LAST_USED_ID_KEY, ACTIVE_CONNECTIONS_KEY } from '@sqltools/plugins/connection-manager/cache/connections-state.model';
 import { Parser, Select } from 'node-sql-parser';
 import Connection from '@sqltools/language-server/connection';
 import { TableCompletionItem, TableColumnCompletionItem } from './models';

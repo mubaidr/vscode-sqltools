@@ -1,21 +1,21 @@
-if (process.env.PRODUCT !== 'ext') { throw 'Cant use config-manager module outside of VSCode context'; }
+if (String(process.env.IS_LANGUAGE_SERVER) === '1') { throw 'Cant use config-manager module outside of VSCode context'; }
 
 import { InvalidActionError } from '@sqltools/util/exception';
 import { workspace } from 'vscode';
-import { EXT_CONFIG_NAMESPACE } from '@sqltools/util/constants';
+import { EXT_NAMESPACE } from '@sqltools/util/constants';
 import Context from '@sqltools/vscode/context';
 import { OnUpdateConfigHandler, IConfig, KeysOfSettings } from '@sqltools/types';
 
 const onUpdateHooks: OnUpdateConfigHandler[] = [];
 
 const get: IConfig['get'] = (configKey, defaultValue = null) => {
-  const result = workspace.getConfiguration().get(`${EXT_CONFIG_NAMESPACE}.${configKey}`);
+  const result = workspace.getConfiguration().get(`${EXT_NAMESPACE}.${configKey}`);
   if (typeof result === 'undefined') return defaultValue;
   return result;
 }
 
 const update: IConfig['update'] = (configKey, value) => {
-  return Promise.resolve(workspace.getConfiguration().update(`${EXT_CONFIG_NAMESPACE}.${configKey}`, value));
+  return Promise.resolve(workspace.getConfiguration().update(`${EXT_NAMESPACE}.${configKey}`, value));
 }
 
 const addOnUpdateHook: IConfig['addOnUpdateHook'] = (handler) => {
@@ -43,7 +43,7 @@ Context.onRegister(() => {
   Context.subscriptions.push(workspace.onDidChangeConfiguration(event => {
     const affectsConfiguration = event.affectsConfiguration;
     const affectsConfig = (section: KeysOfSettings, resource?: any) => {
-      return affectsConfiguration(`${EXT_CONFIG_NAMESPACE}.${section}`, resource);
+      return affectsConfiguration(`${EXT_NAMESPACE}.${section}`, resource);
   };
     onUpdateHooks.forEach(cb => cb({ event: { affectsConfig, affectsConfiguration } }));
   }));

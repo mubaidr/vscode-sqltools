@@ -83,12 +83,11 @@
   },
   "devDependencies": {
     "@mysql/xdevapi": "^8.0.20",
-    "@parcel/optimizer-terser": "^2.0.0-alpha.3",
+    "@parcel/optimizer-terser": "^2.0.0-beta.1",
     "@sqltools/base-driver": "latest",
     "@types/lodash": "^4.14.123",
     "@types/mysql": "^2.15.12",
     "@types/vscode": "^1.42.0",
-    "@types/webpack-env": "^1.15.2",
     "compare-versions": "3.6.0",
     "concurrently": "^5.2.0",
     "lodash": "^4.17.13",

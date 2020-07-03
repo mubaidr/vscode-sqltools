@@ -2,7 +2,7 @@ import logger from '@sqltools/util/log';
 import path from 'path';
 import fs from 'fs';
 import Config from '@sqltools/util/config-manager';
-import { DISPLAY_NAME, EXT_NAMESPACE, EXT_CONFIG_NAMESPACE, ServerErrorNotification } from '@sqltools/util/constants';
+import { DISPLAY_NAME, EXT_NAMESPACE, ServerErrorNotification } from '@sqltools/util/constants';
 import { sync as commandExists } from 'command-exists';
 import { env as VSCodeEnv, version as VSCodeVersion, workspace as Wspc, window, commands, ConfigurationTarget, workspace } from 'vscode';
 import { CloseAction, ErrorAction, ErrorHandler as LanguageClientErrorHandler, LanguageClient, LanguageClientOptions, NodeModule, ServerOptions, TransportKind } from 'vscode-languageclient';
@@ -12,7 +12,7 @@ import { ILanguageClient, ITelemetryArgs } from '@sqltools/types';
 import Context from '@sqltools/vscode/context';
 import uniq from 'lodash/uniq';
 import { ElectronNotSupportedNotification } from '@sqltools/base-driver/dist/lib/notification';
-import { ExitCalledNotification } from '../api/contracts';
+import { ExitCalledNotification } from '@sqltools/language-server/notifications';
 
 const log = logger.extend('lc');
 
@@ -23,7 +23,7 @@ export class SQLToolsLanguageClient implements ILanguageClient {
   private avoidRestart = false;
   constructor() {
     this.client = new LanguageClient(
-      EXT_CONFIG_NAMESPACE,
+      EXT_NAMESPACE,
       `${DISPLAY_NAME} Language Server`,
       this.getServerOptions(),
       this.getClientOptions(),
@@ -85,7 +85,7 @@ export class SQLToolsLanguageClient implements ILanguageClient {
   }
 
   private getServerOptions(): ServerOptions {
-    const serverModule = Context.asAbsolutePath('languageserver.js');
+    const serverModule = Context.asAbsolutePath('dist/language-server.js');
     let runtime: string = undefined;
     const useNodeRuntime = Config.useNodeRuntime;
     if (useNodeRuntime) {
@@ -113,6 +113,8 @@ export class SQLToolsLanguageClient implements ILanguageClient {
       options: {
         env: {
           ...(Config.languageServerEnv || {}),
+          PRODUCT: 'ls',
+          IS_LANGUAGE_SERVER: 1,
           IS_NODE_RUNTIME: useNodeRuntime ? 1 : 0,
         },
       }
@@ -172,7 +174,7 @@ export class SQLToolsLanguageClient implements ILanguageClient {
       progressOnInitialization: true,
       outputChannel: logger.outputChannel,
       synchronize: {
-        configurationSection: [EXT_CONFIG_NAMESPACE, 'telemetry'],
+        configurationSection: [EXT_NAMESPACE, 'telemetry'],
         fileEvents: Wspc.createFileSystemWatcher(`**/.${EXT_NAMESPACE}rc`),
       },
       initializationFailedHandler: error => {
@@ -213,13 +215,13 @@ export class SQLToolsLanguageClient implements ILanguageClient {
 
   private electronNotSupported = async () => {
     const r = await window.showInformationMessage(
-      `VSCode engine is not supported. You should enable \'${EXT_CONFIG_NAMESPACE}.useNodeRuntime\' and have NodeJS installed to continue.`,
+      `VSCode engine is not supported. You should enable \'${EXT_NAMESPACE}.useNodeRuntime\' and have NodeJS installed to continue.`,
       'Enable now',
     );
     if (!r) return;
-    await Wspc.getConfiguration(EXT_CONFIG_NAMESPACE).update('useNodeRuntime', true, ConfigurationTarget.Global);
-    try { await Wspc.getConfiguration(EXT_CONFIG_NAMESPACE).update('useNodeRuntime', true, ConfigurationTarget.Workspace) } catch(e) {}
-    try { await Wspc.getConfiguration(EXT_CONFIG_NAMESPACE).update('useNodeRuntime', true, ConfigurationTarget.WorkspaceFolder) } catch(e) {}
+    await Wspc.getConfiguration(EXT_NAMESPACE).update('useNodeRuntime', true, ConfigurationTarget.Global);
+    try { await Wspc.getConfiguration(EXT_NAMESPACE).update('useNodeRuntime', true, ConfigurationTarget.Workspace) } catch(e) {}
+    try { await Wspc.getConfiguration(EXT_NAMESPACE).update('useNodeRuntime', true, ConfigurationTarget.WorkspaceFolder) } catch(e) {}
     const res = await window.showInformationMessage(
       `\'${EXT_NAMESPACE}.useNodeRuntime\' enabled. You must reload VSCode to take effect.`, 'Reload now');
     if (!res) return;
